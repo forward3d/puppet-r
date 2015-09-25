@@ -1,0 +1,8 @@
+
+# As the System Path has not taken effect during the Puppet run we need to use
+# the absolute path of r.exe. This changes with each version, the path also contains
+# spaces.
+
+$absolute_path = (Get-ChildItem $Env:ProgramFiles\R\R-*\bin\R.exe | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName
+
+if(Invoke-Expression -Command "& '$absolute_path' -q -e `"'<%= scope.lookupvar('name') %>' %in% installed.packages()`"" | Select-String 'TRUE'){ exit 0 } else { exit 1 }

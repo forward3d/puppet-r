@@ -1,0 +1,29 @@
+# This Auto-update is how the Choco package installs it.
+# Auto-update idea from https://chocolatey.org/packages/R.Project/3.1.3#comment-1174062797
+$baseUrl='http://cran.at.r-project.org/bin/windows/base/'
+if(!((New-Object System.Net.WebClient).DownloadString($baseUrl) -match "R-(\d\.\d\.\d)-win.exe")) {
+  throw "Unable to determine latest version from $baseUrl"
+}
+
+$version = "$($Matches[1])"
+$downloadUrl = "$baseUrl$($Matches[0])"
+
+Invoke-WebRequest -Uri $downloadUrl -OutFile "${Env:TEMP}\$($Matches[0])"
+
+# Wrapper to block while install completes.
+Invoke-Expression -Command "${Env:TEMP}\$($Matches[0]) /silent; while (`$true) { Start-Sleep -Seconds 5; if (-not (Get-Process -Name $($Matches[0]) -ErrorAction SilentlyContinue)) { break }}"
+
+if(Test-Path "$Env:ProgramFiles\R\R-*\bin\R.exe"){
+    #Put R on System Path
+    $InstallPath = (Get-ChildItem $Env:ProgramFiles\R\R-*\bin | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName
+    $envPath = $env:PATH
+    if (!$envPath.ToLower().Contains($InstallPath.ToLower())) {
+        Write-Host "PATH environment variable does not have `'$InstallPath`' in it. Adding..."
+        $ActualPath = [Environment]::GetEnvironmentVariable('Path', [System.EnvironmentVariableTarget]::Machine)
+        $StatementTerminator = ";"
+        $HasStatementTerminator = $ActualPath -ne $null -and $ActualPath.EndsWith($StatementTerminator)
+        If (!$HasStatementTerminator -and $ActualPath -ne $null) {$InstallPath = $StatementTerminator + $InstallPath}
+
+        [Environment]::SetEnvironmentVariable('Path', $ActualPath + $InstallPath, [System.EnvironmentVariableTarget]::Machine)
+    }
+}
