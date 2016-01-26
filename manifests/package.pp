@@ -1,4 +1,4 @@
-define r::package($r_path = '', $repo = 'http://cran.rstudio.com', $dependencies = false) {
+define r::package($r_path = '', $repo = 'http://cran.rstudio.com', $dependencies = false, $timeout = 300) {
 
     case $::osfamily {
     '^(Debian|RedHat)$': {
@@ -18,6 +18,7 @@ define r::package($r_path = '', $repo = 'http://cran.rstudio.com', $dependencies
 
       exec { "install_r_package_${name}":
         command => $command,
+        timeout => $timeout,
         unless  => "${binary} -q -e \"'${name}' %in% installed.packages()\" | grep 'TRUE'",
         require => Class['r']
       }
