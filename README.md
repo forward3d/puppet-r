@@ -17,3 +17,14 @@ To define a package, and all required dependencies, use this format:
     r::package { 'reshape': dependencies => true, }
 
 on RHEL/CentOS machines, make sure you have EPEL enabled, or R won't install properly.
+
+
+## Testing
+Testing is done via rspec-puppet, install dependencies
+```
+bundle install
+```
+run tests
+```
+rspec
+```
