@@ -1,7 +1,9 @@
 define r::package($r_path = '', $repo = 'http://cran.rstudio.com', $dependencies = false, $timeout = 300) {
 
+    package{"goo":}
+
     case $::osfamily {
-    '^(Debian|RedHat)$': {
+    /(Debian|RedHat)/: {
 
       if $r_path == '' {
         $binary = '/usr/bin/R'
