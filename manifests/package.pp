@@ -1,7 +1,7 @@
 define r::package($r_path = '', $repo = 'http://cran.rstudio.com', $dependencies = false, $timeout = 300) {
 
     case $::osfamily {
-    '^(Debian|RedHat)$': {
+    /^(Debian|RedHat)$/: {
 
       if $r_path == '' {
         $binary = '/usr/bin/R'
