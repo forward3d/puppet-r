@@ -2,7 +2,7 @@
 
 define r::package (
   $r_path       = '',
-  $repo         = 'http://cran.rstudio.com',
+  $repo         = 'https://cran.rstudio.com',
   $dependencies = false,
   $environment  = undef,
   $timeout      = 300,
