@@ -1,11 +1,15 @@
-class r {
+# init.pp
+
+class r (
+  $package_ensure = installed,
+) {
 
   case $::osfamily {
     'Debian': {
-      package {'r-base': ensure => installed}
+      package { 'r-base': ensure => $package_ensure }
     }
     'RedHat': {
-      package {'R-core': ensure => installed}
+      package { 'R-core': ensure => $package_ensure }
     }
     'windows': {
       # Choco package does not install static version and does not add R to PATH
