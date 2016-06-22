@@ -9,7 +9,7 @@ define r::package (
 ) {
 
     case $::osfamily {
-    '^(Debian|RedHat)$': {
+    'Debian', 'RedHat': {
 
       if $r_path == '' {
         $binary = '/usr/bin/R'
