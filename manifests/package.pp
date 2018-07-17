@@ -1,11 +1,15 @@
 # package.pp
 
 define r::package (
-  $r_path       = '',
-  $repo         = 'https://cran.rstudio.com',
-  $dependencies = false,
-  $environment  = undef,
-  $timeout      = 300,
+  $r_path               = '',
+  $repo                 = 'https://cran.rstudio.com',
+  $source               = 'CRAN',
+  Boolean $dependencies = false,
+  $environment          = undef,
+  $timeout              = 300,
+  $configure_args       = undef,
+  Boolean $quiet        = true,
+  Boolean $force        = false,
 ) {
 
     case $::osfamily {
@@ -19,16 +23,21 @@ define r::package (
         $binary = $r_path
       }
 
-      $command = $dependencies ? {
-        true    => "${binary} -e \"install.packages('${name}', repos='${repo}', dependencies = TRUE)\"",
-        default => "${binary} -e \"install.packages('${name}', repos='${repo}', dependencies = FALSE)\""
+      $command = $source ? {
+        'github' => "${binary} -e \"library(devtools); install_github('${name}', ref='master', quiet=${quiet.bool2str.upcase}, force=${force.bool2str.upcase})\"",
+        default  => "${binary} -e \"install.packages('${name}', repos='${repo}', dependencies=${dependencies.bool2str.upcase}, configure.args='${configure_args}', quite=${quiet.bool2str.upcase}, force=${force.bool2str.upcase})\""
+      }
+
+      $unless_command = $force ? {
+        true  => "/usr/bin/echo FALSE | grep 'TRUE'",
+        false => "${binary} -q -e \"'${name.split('/')[-1]}' %in% installed.packages()\" | grep 'TRUE'"
       }
 
       exec { "install_r_package_${name}":
         command     => $command,
         environment => $environment,
         timeout     => $timeout,
-        unless      => "${binary} -q -e \"'${name}' %in% installed.packages()\" | grep 'TRUE'",
+        unless      => $unless_command,
         require     => Class['r']
       }
 
