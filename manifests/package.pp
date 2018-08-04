@@ -4,6 +4,7 @@ define r::package (
   $r_path               = '',
   $repo                 = 'https://cran.rstudio.com',
   $source               = 'CRAN',
+  $ref                  = 'master',
   Boolean $dependencies = false,
   $environment          = undef,
   $timeout              = 300,
@@ -24,7 +25,7 @@ define r::package (
       }
 
       $command = $source ? {
-        'github' => "${binary} -e \"library(devtools); install_github('${name}', ref='master', quiet=${quiet.bool2str.upcase}, force=${force.bool2str.upcase})\"",
+        'github' => "${binary} -e \"library(devtools); install_github('${name}', ref=${ref}, quiet=${quiet.bool2str.upcase}, force=${force.bool2str.upcase})\"",
         default  => "${binary} -e \"install.packages('${name}', repos='${repo}', dependencies=${dependencies.bool2str.upcase}, configure.args='${configure_args}', quite=${quiet.bool2str.upcase}, force=${force.bool2str.upcase})\""
       }
 
