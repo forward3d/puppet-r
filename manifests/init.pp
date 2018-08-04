@@ -10,8 +10,8 @@ class r (
       package { 'r-base': ensure => $ensure }
     }
     'RedHat': {
-      package { 'R': ensure => $devel } ->
-      package { 'R-core': ensure => $ensure }
+      package { 'R': ensure => $devel }
+      -> package { 'R-core': ensure => $ensure }
     }
     'windows': {
       # Choco package does not install static version and does not add R to PATH

@@ -25,8 +25,8 @@ define r::package (
       }
 
       $command = $source ? {
-        'github' => "${binary} -e \"library(devtools); install_github('${name}', ref=${ref}, quiet=${quiet.bool2str.upcase}, force=${force.bool2str.upcase})\"",
-        default  => "${binary} -e \"install.packages('${name}', repos='${repo}', dependencies=${dependencies.bool2str.upcase}, configure.args='${configure_args}', quite=${quiet.bool2str.upcase}, force=${force.bool2str.upcase})\""
+        'github' => "${binary} -e \"library(devtools); install_github('${name}', ref=\'${ref}\', quiet=${quiet.bool2str.upcase}, force=${force.bool2str.upcase})\"", # lint:ignore:140chars
+        default  => "${binary} -e \"install.packages('${name}', repos='${repo}', dependencies=${dependencies.bool2str.upcase}, configure.args='${configure_args}', quite=${quiet.bool2str.upcase}, force=${force.bool2str.upcase})\"" # lint:ignore:140chars
       }
 
       $unless_command = $force ? {
